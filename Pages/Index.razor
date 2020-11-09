@@ -1,0 +1,87 @@
+﻿@page "/"
+@inject IJSRuntime JSRuntime
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+<SurveyPrompt Title="How is Blazor working for you?" />
+
+<br />
+<h3>Link Tests:</h3>
+
+<NavLink href="Counter/">NavLink</NavLink>
+
+<a href="Counter/">ahref link</a>
+
+<a href="javascript:windows.location.href='Counter/'; return false;">ahref javascript</a>
+
+<webcomp-link></webcomp-link>
+
+<br />
+<br />
+<br />
+<h3>Event Test:</h3>
+
+<webcomp-event @ref="_eventRef"></webcomp-event>
+
+<br />
+<br />
+<br />
+<h3>Property SetObject Test:</h3>
+
+<webcomp-property @ref="_webcompSetProperty"></webcomp-property>
+
+
+
+
+@code {
+    private ElementReference _eventRef;
+    private DotNetObjectReference<Index> _thisRef;
+
+    private ElementReference _webcompSetProperty;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        // Events
+
+        _thisRef = DotNetObjectReference.Create<Index>(this);
+        await JSRuntime.InvokeVoidAsync("registerBlazorCustomHandler", _eventRef, "customcheck", _thisRef, "HandleCounterClickAsync");
+
+
+        var links = new List<Link>()
+        {
+            new Link(href: "Counter", text: "Counter" ),
+            new Link(href: "http://www.google.com", text: "Google" ),
+            new Link(href: "http://www.bing.com", text: "Bing" ),
+        };
+
+
+        // Links
+        await JSRuntime.InvokeAsync<string>("setWebComponentProperty", _webcompSetProperty, "linklist", links);
+    }
+
+    [JSInvokable("HandleCounterClickAsync")]
+    public async Task HandleCounterClickAsync(bool isChecked, int clickCount)
+    {
+        await JSRuntime.InvokeVoidAsync("alert", $"FromBlazor ClickCount: {clickCount} IsChecked: {isChecked}");
+    }
+
+    public void Dispose()
+    {
+        _thisRef?.Dispose();
+    }
+
+    public class Link
+    {
+        public Link(string href, string text)
+        {
+            this.href = href;
+            this.text = text;
+        }
+
+        public string href { get; set; }
+
+        public string text { get; set; }
+    }
+}
