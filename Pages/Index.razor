@@ -38,7 +38,8 @@ Welcome to your new app.
 
 <webcomp-property @ref="_webcompSetProperty"></webcomp-property>
 
-
+<!-- How I wish it would be-->
+@*<webcomp-property @custom:linklist="_links"></webcomp-property>*@
 
 
 @code {
@@ -47,6 +48,13 @@ Welcome to your new app.
 
     private ElementReference _webcompSetProperty;
 
+    List<Link> _links = new List<Link>()
+        {
+            new Link(href: "Counter", text: "Counter" ),
+            new Link(href: "http://www.google.com", text: "Google" ),
+            new Link(href: "http://www.bing.com", text: "Bing" ),
+        };
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         // Events
@@ -54,28 +62,18 @@ Welcome to your new app.
         _thisRef = DotNetObjectReference.Create<Index>(this);
         await JSRuntime.InvokeVoidAsync("registerBlazorCustomHandler", _eventRef, "customcheck", _thisRef, "HandleCounterClickAsync");
 
-
-        var links = new List<Link>()
-        {
-            new Link(href: "Counter", text: "Counter" ),
-            new Link(href: "http://www.google.com", text: "Google" ),
-            new Link(href: "http://www.bing.com", text: "Bing" ),
-        };
-
-
         // Links
-        await JSRuntime.InvokeAsync<string>("setWebComponentProperty", _webcompSetProperty, "linklist", links);
-    }
-
-    public class CustomEventHandlerArgs
-    {
-        public dynamic Detail { get; set; }
+        await JSRuntime.InvokeAsync<string>("setWebComponentProperty", _webcompSetProperty, "linklist", _links);
     }
 
     //// How it should be
+    //public class CustomEventHandlerArgs : EventArgs
+    //{
+    //    public dynamic Detail { get; set; }
+    //}
     //public async Task CustomHandlerAsync(CustomEventHandlerArgs args)
     //{
-    //    await JSRuntime.InvokeVoidAsync("alert", $"FromBlazor ClickCount: {clickCount} IsChecked: {isChecked}");
+    //    await JSRuntime.InvokeVoidAsync("alert", $"FromBlazor ClickCount: {args.Detail.clickCount} IsChecked: {args.Detail.isChecked}");
     //}
 
     [JSInvokable("HandleCounterClickAsync")]
