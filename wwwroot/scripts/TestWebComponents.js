@@ -98,13 +98,6 @@ customElements.define('webcomp-property', class extends HTMLElement {
          </div>
     `;
     }
-
-
-    //static get properties() {
-    //    return {
-    //        linklist: { type: Array },
-    //    };
-    //}
 });
 
 function setWebComponentProperty(webComp, propertyName, value) {
