@@ -27,6 +27,9 @@ Welcome to your new app.
 
 <webcomp-event @ref="_eventRef"></webcomp-event>
 
+<!-- how I wish it would be -->
+@*<webcomp-event @oncustom:customcheck="CustomHandlerAsync"></webcomp-event>*@
+
 <br />
 <br />
 <br />
@@ -63,6 +66,17 @@ Welcome to your new app.
         // Links
         await JSRuntime.InvokeAsync<string>("setWebComponentProperty", _webcompSetProperty, "linklist", links);
     }
+
+    public class CustomEventHandlerArgs
+    {
+        public dynamic Detail { get; set; }
+    }
+
+    //// How it should be
+    //public async Task CustomHandlerAsync(CustomEventHandlerArgs args)
+    //{
+    //    await JSRuntime.InvokeVoidAsync("alert", $"FromBlazor ClickCount: {clickCount} IsChecked: {isChecked}");
+    //}
 
     [JSInvokable("HandleCounterClickAsync")]
     public async Task HandleCounterClickAsync(bool isChecked, int clickCount)
